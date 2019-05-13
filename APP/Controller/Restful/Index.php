@@ -6,8 +6,13 @@ use Model\Restful\User;
 
 class Index {
     public function register() {
-        $db = new Db();
-        $obj = new User($db->pdo);
-        var_dump($obj->register($_GET['username'], $_GET['password']));
+        try {
+            $db = new Db();
+            $objUser = new User($db->pdo);
+            $result = $objUser->register($_GET['username'], $_GET['password']);
+            echo json_encode(['isSuccess' => 1, 'errno' => 0, 'errmsg' => '', 'data' => $result], JSON_UNESCAPED_UNICODE);
+        } catch (\Exception $e) {
+            echo json_encode(['isSuccess' => 0, 'errno' => $e->getCode(), 'errmsg' => $e->getMessage(), 'data' => []], JSON_UNESCAPED_UNICODE);
+        }
     }
 }
