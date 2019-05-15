@@ -21,7 +21,23 @@ class User {
      * @param string $password
      */
     public function login($username, $password) {
+        $this->_checkUser($username, $password);
         
+        $sql = 'SELECT * From `user` where user_name = :username and password = :password';
+        $stmt = $this->_db->prepare($sql);
+        $password = $this->_md5($password);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':password', $password);
+        
+        $stmt->execute();
+        
+        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if (empty($user)) {
+            throw new \Exception('用户名或密码错误！', ErrorCode::USERORPWDWRONG);
+        }
+        
+        unset($user['password']);
+        return $user;
     }
     
     /**
@@ -30,13 +46,7 @@ class User {
      * @param string $password
      */
     public function register($username, $password) {
-        if(empty($username)) {
-            throw new \Exception('用户名不能为空', ErrorCode::USERNAME_NOT_EMPTY);
-        }
-        
-        if(empty($password)) {
-            throw new \Exception('密码不能为空', ErrorCode::PASSWORD_NOT_EMPTY);
-        }
+        $this->_checkUser($username, $password);
         
         if ($this->_isUsernameExists($username)) {
             throw new \Exception('用户已存在', ErrorCode::USERNAME_EXISTS);
@@ -60,6 +70,21 @@ class User {
             'username' => $username,
             'createAt' => $createAt
         ];
+    }
+    
+    /**
+     * 检查用户名密码
+     * @param string $username
+     * @param string $password
+     */
+    private function _checkUser($username, $password) {
+        if(empty($username)) {
+            throw new \Exception('用户名不能为空', ErrorCode::USERNAME_NOT_EMPTY);
+        }
+        
+        if(empty($password)) {
+            throw new \Exception('密码不能为空', ErrorCode::PASSWORD_NOT_EMPTY);
+        }
     }
     
     /**
