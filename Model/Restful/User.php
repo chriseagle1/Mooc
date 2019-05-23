@@ -33,7 +33,7 @@ class User {
         
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (empty($user)) {
-            throw new \Exception('用户名或密码错误！', ErrorCode::USERORPWDWRONG);
+            throw new \Exception('用户名或密码错误！', ErrorCode::USER_OR_PWD_WRONG);
         }
         
         unset($user['password']);
