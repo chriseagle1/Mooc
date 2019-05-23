@@ -38,4 +38,15 @@ class Index {
             echo json_encode(['isSuccess' => 0, 'errno' => $e->getCode(), 'errmsg' => $e->getMessage(), 'data' => []], JSON_UNESCAPED_UNICODE);
         }
     }
+    
+    public function viewArticle() {
+        try {
+            $db = new Db();
+            $objArticle = new Article($db->pdo);
+            $result = $objArticle->view(2);
+            echo json_encode(['isSuccess' => 1, 'errno' => 0, 'errmsg' => '', 'data' => $result], JSON_UNESCAPED_UNICODE);
+        } catch (\Exception $e) {
+            echo json_encode(['isSuccess' => 0, 'errno' => $e->getCode(), 'errmsg' => $e->getMessage(), 'data' => []], JSON_UNESCAPED_UNICODE);
+        }
+    }
 }
