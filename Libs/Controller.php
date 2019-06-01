@@ -15,8 +15,10 @@ class Controller {
     }
     
     public function run() {
-        $object = new $this->className;
-        call_user_func([$object, $this->action]);
+        if (class_exists($this->className)) {
+            $object = new $this->className;
+            call_user_func([$object, $this->action]);
+        }
     }
     
     public function handleRequest() {
